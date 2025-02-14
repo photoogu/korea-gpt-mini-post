@@ -12,6 +12,10 @@
         <result property="password" column="password" />
         <result property="name" column="name" />
         <result property="email" column="email" />
+        <result property="isAccountNonExpired" column="account_expired" />
+        <result property="isAccountNonLocked" column="account_locked" />
+        <result property="isCredentialsNonExpired" column="credentials_expired" />
+        <result property="isEnabled" column="account_enabled" />
     </resultMap>
 
     <select id="selectById" resultMap="userResultMap">
@@ -20,18 +24,38 @@
             username,
             password,
             name,
-            email
+            email,
+            account_expired,
+            account_locked,
+            credentials_expired,
+            account_enabled
         from
             user_tb
         where
             user_id = #{userId}
+    </select>
+    <select id="selectByUsername" resultMap="userResultMap">
+        select
+            user_id,
+            username,
+            password,
+            name,
+            email,
+            account_expired,
+            account_locked,
+            credentials_expired,
+            account_enabled
+        from
+            user_tb
+        where
+            username = #{username}
     </select>
 
     <insert id="insert" keyProperty="userId" useGeneratedKeys="true">
         insert into
             user_tb
         values
-            (default, #{username}, #{password}, #{name}, #{email}, NOW())
+            (default, #{username}, #{password}, #{name}, #{email}, NOW(), 1, 1, 1, 1)
     </insert>
 
 </mapper>

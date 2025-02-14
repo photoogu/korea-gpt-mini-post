@@ -15,10 +15,6 @@ public class UserRepository {
     @Autowired
     private UserMapper userMapper;
 
-    public Optional<User> findById(int userId) {
-        return Optional.ofNullable(userMapper.selectById(userId));
-    }
-
     public Optional<User> save (User user) {
         try {
             userMapper.insert(user);
@@ -26,6 +22,14 @@ public class UserRepository {
             return Optional.empty();
         }
         return Optional.of(user);
+    }
+
+    public Optional<User> findById(int userId) {
+        return Optional.ofNullable(userMapper.selectById(userId));
+    }
+
+    public Optional<User> findByUsername(String username) {
+        return Optional.ofNullable(userMapper.selectByUsername(username));
     }
 
 }

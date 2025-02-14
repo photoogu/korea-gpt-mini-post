@@ -16,17 +16,20 @@ public class PostRepository {
     @Autowired
     private PostMapper postMapper;
 
-    public Optional<Post> addPost (Post post) {
-        postMapper.insertPost(post);
-        return Optional.of(post);
+    public Optional<Post> save(Post post) {
+        int successCount = postMapper.insert(post);
+        return successCount < 1 ? Optional.empty() : Optional.of(post);
     }
 
-    public Optional<List<Post>> selectAllPosts() {
-        List<Post> foundPosts = postMapper.selectAllPost();
-        return Optional.of(foundPosts);
+    public Optional<Post> findById(int id) {
+        Post post = postMapper.selectById(id);
+        return Optional.ofNullable(post);
     }
 
-    public Optional<Post> selectPostById(int postId) {
-        return Optional.of(postMapper.selectPostById(postId));
+    public Optional<List<Post>> findAllByKeywordContaining(int startIndex, int limitCount, String keyword) {
+        List<Post> posts = postMapper.selectAllByKeywordContaining(startIndex, limitCount, keyword);
+        return posts.isEmpty() ? Optional.empty() : Optional.of(posts);
     }
+
+
 }

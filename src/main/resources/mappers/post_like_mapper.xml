@@ -6,16 +6,26 @@
 
 <mapper namespace="com.korit.mini_post.mapper.PostLikeMapper">
 
-    <resultMap id="postLikeMapper" type="com.korit.mini_post.entity.PostLike">
+    <resultMap id="likeCountResultMap" type="com.korit.mini_post.entity.PostLike">
         <id property="postId" column="post_id"/>
-        <result property="userId" column="user_id"/>
+        <result property="likeCount" column="like_count"/>
     </resultMap>
 
-    <insert id="insert" keyProperty="postLikeId" useGeneratedKeys="true">
+    <insert id="insert">
         insert into post_like_tb
-        values(default, #{postId}, #{userId}, NOW())
+        select
+            iv.post_like_id,
+            iv.post_id,
+            iv.user_id,
+            iv.created_at
+        from
+            (select 0 as post_like_id, #{postId} as post_id, #{userId} as user_id, now() as created_at) iv
+            left outer join post_like_tb plt on(plt.post_id = iv.post_id and plt.user_id = iv.user_id)
+        where
+            plt.post_like_id is null
     </insert>
-    <delete id="delete">
+
+    <delete id="deleteByPostIdAndUserId">
         delete
         from
             post_like_tb
@@ -24,13 +34,24 @@
 
     </delete>
 
-    <select id="getLikeCount" resultType="java.lang.Integer">
+    <select id="selectLikeCountByPostId" resultType="java.lang.Integer">
         select
-            count(post_id)
+            post_id,
+            count(post_id) as like_count
         from
             post_like_tb
         where
             post_id = #{postId}
+        group by
+            post_id
+    </select>
+
+    <select id="selectLikeCountAll" resultMap="likeCountResultMap">
+        select
+            post_id,
+            count(post_id) as like_count
+        from
+            post_like_tb
         group by
             post_id
     </select>

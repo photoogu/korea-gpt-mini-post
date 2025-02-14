@@ -2,12 +2,17 @@ package com.korit.mini_post.mapper;
 
 import com.korit.mini_post.entity.PostLike;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 @Mapper
 public interface PostLikeMapper {
-    int insert(int postId, int userId);
+    int insert(PostLike postLike);
 
-    int delete(int postId, int userId);
+    int deleteByPostIdAndUserId(PostLike postLike);
 
-    int getLikeCount(int postId);
+    int selectLikeCountByPostId(@Param("postId") int postId);
+
+    List<PostLike> selectLikeCountAll();
 }
